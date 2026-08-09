@@ -9,7 +9,7 @@ locals {
 
   tags = {
     Project     = local.name_prefix
-    GithubRepo  = "https://github.com/khaledyousryhegazy?tab=repositories/enterprise-gitops-kubernetes-platform"
+    GithubRepo  = "https://github.com/khaledyousryhegazy/enterprise-gitops-kubernetes-platform"
     Environment = "DEVELOPMENT"
     Owner       = "Khaled"
     ManagedBy   = "Terraform"

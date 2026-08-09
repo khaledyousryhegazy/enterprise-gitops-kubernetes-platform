@@ -3,7 +3,7 @@ variable "name_prefix" {
 }
 
 variable "tags" {
-  type = list(map)
+  type = map(string)
 }
 
 variable "azs" {
