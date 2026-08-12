@@ -1,0 +1,1 @@
+github_repository = "khaledyousryhegazy/enterprise-gitops-kubernetes-platform"

@@ -11,6 +11,28 @@ module "github_oidc_provider" {
 }
 
 # ============================================================
+# GitHub Actions OIDC Role
+# ============================================================
+
+module "github_actions_role" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-role"
+
+  name = "${var.name_prefix}-github-actions-role"
+
+  enable_github_oidc = true
+
+  oidc_wildcard_subjects = [
+    "repo:${var.github_repository}:*"
+  ]
+
+  policies = {
+    AmazonEC2ContainerRegistryPowerUser = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  }
+
+  tags = var.tags
+}
+
+# ============================================================
 # EKS Cluster Role
 # ============================================================
 
@@ -63,28 +85,6 @@ module "eks_node_role" {
     AmazonEC2ContainerRegistryPullOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
 
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  }
-
-  tags = var.tags
-}
-
-# ============================================================
-# GitHub Actions OIDC Role
-# ============================================================
-
-module "github_actions_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role"
-
-  name = "${var.name_prefix}-github-actions-role"
-
-  enable_github_oidc = true
-
-  oidc_wildcard_subjects = [
-    "repo:${var.github_repository}:*"
-  ]
-
-  policies = {
-    AmazonEC2ContainerRegistryPowerUser = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   }
 
   tags = var.tags
