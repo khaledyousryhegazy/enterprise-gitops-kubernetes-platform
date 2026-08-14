@@ -9,3 +9,7 @@ variable "tags" {
 variable "name_prefix" {
   type = string
 }
+
+variable "node_security_group_id" {
+  type = string
+}

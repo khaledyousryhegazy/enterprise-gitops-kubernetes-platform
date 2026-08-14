@@ -14,6 +14,12 @@ Node roles
 IRSA / Pod Identity
 OIDC
 
+<!-- ------------------------------------------------------------- -->
+
+[before continue recap, do a plan and understand the structure again]
+
+<!-- ------------------------------------------------------------- -->
+
 KMS
 EKS / Secrets / S3 encryption
 

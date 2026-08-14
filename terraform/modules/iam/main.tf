@@ -17,7 +17,7 @@ module "github_oidc_provider" {
 module "github_actions_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "${var.name_prefix}-github-actions-role"
+  name = "${var.name_prefix}-GH-actions-role"
 
   enable_github_oidc = true
 
@@ -39,7 +39,7 @@ module "github_actions_role" {
 module "eks_cluster_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "${var.name_prefix}-eks-cluster-role"
+  name = "${var.name_prefix}-cluster-role"
 
   trust_policy_permissions = {
     eks = {
@@ -66,7 +66,7 @@ module "eks_cluster_role" {
 module "eks_node_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "${var.name_prefix}-eks-node-role"
+  name = "${var.name_prefix}-node-role"
 
   trust_policy_permissions = {
     ec2 = {
@@ -157,7 +157,7 @@ module "ebs_csi_role" {
 module "aws_lb_controller_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "${var.name_prefix}-aws-lb-controller-role"
+  name = "${var.name_prefix}-aws-lb-role"
 
   trust_policy_permissions = {
     pods = {
@@ -183,7 +183,7 @@ module "aws_lb_controller_role" {
 module "external_dns_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "${var.name_prefix}-external-dns-role"
+  name = "${var.name_prefix}-extrnl-dns-role"
 
   trust_policy_permissions = {
     pods = {
@@ -200,4 +200,21 @@ module "external_dns_role" {
   }
 
   tags = var.tags
+}
+
+# ============================================================
+# Associations
+# ============================================================
+resource "aws_eks_pod_identity_association" "aws_lb_controller" {
+  cluster_name    = var.cluster_name
+  namespace       = "kube-system"
+  service_account = "aws-load-balancer-controller"
+  role_arn        = module.aws_lb_controller_role.iam_role_arn
+}
+
+resource "aws_eks_pod_identity_association" "external_dns" {
+  cluster_name    = var.cluster_name
+  namespace       = "kube-system"
+  service_account = "external-dns"
+  role_arn        = module.external_dns_role.iam_role_arn
 }

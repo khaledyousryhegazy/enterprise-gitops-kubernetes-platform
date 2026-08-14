@@ -1,7 +1,32 @@
+data "aws_ami" "amz_ami" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
 data "aws_availability_zones" "available" {}
 
 locals {
-  name_prefix = "enterprise-gitops-kubernetes-platform"
+  name_prefix = "gitops-k8s"
   region      = "us-east-1"
 
   vpc_cidr = "10.0.0.0/16"
