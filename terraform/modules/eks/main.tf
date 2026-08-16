@@ -34,9 +34,11 @@ module "eks" {
   subnet_ids               = var.private_subnets
   control_plane_subnet_ids = var.private_subnets
 
-  create_kms_key                = true
-  enable_kms_key_rotation       = true
-  kms_key_enable_default_policy = true
+  create_kms_key = false
+  encryption_config = {
+    resources        = ["secrets"]
+    provider_key_arn = var.kms_key_arn
+  }
 
   enabled_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 

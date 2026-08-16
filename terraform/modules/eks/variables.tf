@@ -29,3 +29,7 @@ variable "vpc_cni_role_arn" {
 variable "ebs_csi_role_arn" {
   type = string
 }
+
+variable "kms_key_arn" {
+  type = string
+}

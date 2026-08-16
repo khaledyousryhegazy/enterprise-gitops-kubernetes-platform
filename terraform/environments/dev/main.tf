@@ -22,6 +22,12 @@ module "iam" {
   cluster_name      = module.eks_cluster.cluster_name
 }
 
+module "kms" {
+  source      = "../../modules/kms"
+  name_prefix = local.name_prefix
+  tags        = local.tags
+}
+
 module "eks_cluster" {
   source               = "../../modules/eks"
   name_prefix          = local.name_prefix
@@ -32,4 +38,14 @@ module "eks_cluster" {
   eks_node_role_arn    = module.iam.eks_node_role_arn
   eks_cluster_role_arn = module.iam.eks_cluster_role_arn
   ebs_csi_role_arn     = module.iam.ebs_csi_role_arn
+  kms_key_arn          = module.kms.key_arn
+}
+
+module "rds_db" {
+  source               = "../../modules/rds"
+  name_prefix          = local.name_prefix
+  tags                 = local.tags
+  kms_key_arn          = module.kms.key_arn
+  database_subnets     = module.vpc.database_subnets
+  db_security_group_id = module.security_groups.rds_security_group_id
 }

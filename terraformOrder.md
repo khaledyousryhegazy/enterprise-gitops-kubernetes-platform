@@ -22,23 +22,21 @@ OIDC
 
 KMS
 EKS / Secrets / S3 encryption
-
-ECR
-
 EKS Cluster
-
 EKS Node Groups
 On-Demand
 Spot (optional)
-
 EKS Add-ons
 VPC CNI
 CoreDNS
 kube-proxy
 EBS CSI
 Pod Identity Agent
-
 RDS PostgreSQL
+
+<!-- stopped here -->
+
+ECR
 
 ElastiCache Redis
 
