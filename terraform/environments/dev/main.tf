@@ -49,3 +49,14 @@ module "rds_db" {
   database_subnets     = module.vpc.database_subnets
   db_security_group_id = module.security_groups.rds_security_group_id
 }
+
+module "ecr" {
+  source                  = "../../modules/ecr"
+  name_prefix             = local.name_prefix
+  tags                    = local.tags
+  github_actions_role_arn = module.iam.github_actions_role_arn
+}
+
+# module "redis"{
+#   source = "../../redis"
+# }
