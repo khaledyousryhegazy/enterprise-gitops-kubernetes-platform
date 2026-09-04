@@ -30,12 +30,12 @@ RDS PostgreSQL
 ECR
 ElastiCache Redis
 
-<!-- stopped here -->
-
 CloudWatch
 Logs
 Metrics
 Alarms
+
+<!-- stopped here -->
 
 Route 53
 

@@ -64,5 +64,13 @@ module "redis" {
   security_group_id = module.security_groups.redis_security_group_id
   name_prefix       = local.name_prefix
   tags              = local.tags
+}
 
+module "cloudwatch" {
+  source                          = "../../modules/cloudwatch"
+  metric_transformation_name      = var.metric_transformation_name
+  metric_transformation_namespace = var.metric_transformation_namespace
+  email_endpoint                  = var.email_endpoint
+  name_prefix                     = local.name_prefix
+  tags                            = local.tags
 }
