@@ -14,12 +14,6 @@ Node roles
 IRSA / Pod Identity
 OIDC
 
-<!-- ------------------------------------------------------------- -->
-
-[before continue recap, do a plan and understand the structure again]
-
-<!-- ------------------------------------------------------------- -->
-
 KMS
 EKS / Secrets / S3 encryption
 EKS Cluster
@@ -33,12 +27,10 @@ kube-proxy
 EBS CSI
 Pod Identity Agent
 RDS PostgreSQL
+ECR
+ElastiCache Redis
 
 <!-- stopped here -->
-
-ECR
-
-ElastiCache Redis
 
 CloudWatch
 Logs

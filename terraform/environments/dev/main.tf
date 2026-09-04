@@ -57,6 +57,12 @@ module "ecr" {
   github_actions_role_arn = module.iam.github_actions_role_arn
 }
 
-# module "redis"{
-#   source = "../../redis"
-# }
+module "redis" {
+  source            = "../../modules/elasticache"
+  vpc_id            = module.vpc.vpc_id
+  private_subnets   = module.vpc.private_subnets
+  security_group_id = module.security_groups.redis_security_group_id
+  name_prefix       = local.name_prefix
+  tags              = local.tags
+
+}
