@@ -22,3 +22,7 @@ output "cloudwatch_metric_alarm_id" {
   description = "The ID of the Cloudwatch metric alarm"
   value       = module.alarm.cloudwatch_metric_alarm_id
 }
+
+output "sns_topic_arn" {
+  value = module.sns_topic.topic_arn
+}

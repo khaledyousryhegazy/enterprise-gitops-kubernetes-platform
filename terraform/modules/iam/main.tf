@@ -202,19 +202,38 @@ module "external_dns_role" {
   tags = var.tags
 }
 
+
+
+
+
+
+/*
+not using it for now.
+*/
+
 # ============================================================
-# Associations
+# Associations: that's make the app in pods can use the roles
+# app -> pods -> service account -> aws_eks_pod_identity_association -> iam roles
 # ============================================================
 resource "aws_eks_pod_identity_association" "aws_lb_controller" {
   cluster_name    = var.cluster_name
-  namespace       = "kube-system"
+  namespace       = "default"
   service_account = "aws-load-balancer-controller"
   role_arn        = module.aws_lb_controller_role.arn
 }
 
 resource "aws_eks_pod_identity_association" "external_dns" {
   cluster_name    = var.cluster_name
-  namespace       = "kube-system"
+  namespace       = "default"
   service_account = "external-dns"
   role_arn        = module.external_dns_role.arn
 }
+
+
+/*
+ده الـ ServiceAccount اللي الـ Pod بتاع تطبيقك هيشتغل بيه. لو تطبيقك عايز يوصل لحاجة على AWS (مثلاً S3)، لازم:
+
+    تعمل IAM Role جديد (زي اللي عملتهم بالظبط لـ vpc_cni, ebs_csi) بس للـ app
+    تعمل association بينه وبين الـ ServiceAccount ده:
+
+*/

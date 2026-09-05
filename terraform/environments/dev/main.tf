@@ -47,7 +47,7 @@ module "rds_db" {
   tags                 = local.tags
   kms_key_arn          = module.kms.key_arn
   database_subnets     = module.vpc.database_subnets
-  db_security_group_id = module.security_groups.rds_security_group_id
+  db_security_group_id = [module.security_groups.rds_security_group_id]
 }
 
 module "ecr" {

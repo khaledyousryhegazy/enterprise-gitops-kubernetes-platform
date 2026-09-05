@@ -12,7 +12,7 @@ module "db" {
   allocated_storage     = 20
   max_allocated_storage = 100
 
-  db_name  = "${var.name_prefix}-db"
+  db_name  = "gitops_platform_database"
   username = "postgres"
   port     = 5432
 

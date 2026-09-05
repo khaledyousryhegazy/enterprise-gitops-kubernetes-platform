@@ -17,3 +17,8 @@ output "redis_replication_group_id" {
 output "redis_security_group_id" {
   value = module.redis.security_group_id
 }
+
+output "redis_auth_token" {
+  value     = random_password.redis_auth.result
+  sensitive = true
+}

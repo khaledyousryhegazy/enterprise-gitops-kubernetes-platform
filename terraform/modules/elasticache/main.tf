@@ -44,3 +44,5 @@ resource "random_password" "redis_auth" {
   length  = 32
   special = false
 }
+
+# note: the app code didn't ready for redis so i just did the infrastructure part to be ready to use.
