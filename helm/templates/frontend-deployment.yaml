@@ -1,0 +1,5 @@
+# kubernetes production ready deployment file example
+# and start do same with focusing.
+# from this [ https://github.com/slok/kahoy-app-deploy-example/tree/master ]
+# search about the other k8s things like [HorizontalPodAutoscaler, ServiceAccount]
+# just first finish the basics.

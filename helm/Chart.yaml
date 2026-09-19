@@ -1,0 +1,19 @@
+apiVersion: v2
+name: gitops-kubernetes-platform
+description: helm chart for my gitops-kubernetes-platform
+version: 0.1.0
+appVersion: "1.0.0"
+type: application
+
+keywords:
+  - frontend
+  - backend
+  - ingress
+  - terraform iac
+  - docker
+  - helm
+  - gitops
+
+maintainers:
+  - name: khaled yousry
+    email: yousryk49@gmail.com
