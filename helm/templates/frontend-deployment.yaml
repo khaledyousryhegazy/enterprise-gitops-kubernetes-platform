@@ -1,5 +1,74 @@
-# kubernetes production ready deployment file example
-# and start do same with focusing.
-# from this [ https://github.com/slok/kahoy-app-deploy-example/tree/master ]
-# search about the other k8s things like [HorizontalPodAutoscaler, ServiceAccount]
-# just first finish the basics.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-platform-deployment-frontend
+  namespace: app
+  labels:
+    app.kubernetes.io/name: gitops-platform-frontend
+    app.kubernetes.io/instance: gitops-platform-frontend-production
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    team: a-team
+    env: production
+spec:
+  replicas: {{ .Values.replicaCount }}
+  minReadySeconds: 30
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 20%
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gitops-platform-frontend
+      app.kubernetes.io/instance: gitops-platform-frontend-production
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      team: a-team
+      env: production
+  template:
+    metadata:
+      annotations:
+        # Force deployment replicas rollout on each change.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: gitops-platform-frontend
+        app.kubernetes.io/instance: gitops-platform-frontend-production
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        team: a-team
+        env: production
+    spec:
+      containers:
+        - name: app-frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          env:
+            - name: BASE_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: gitops-platform-config
+                  key: BASE_API_URL
+          ports:
+            - containerPort: 4000
+              name: http
+              protocol: TCP
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 64m
+            limits:
+              memory: 256Mi
+              cpu: 128m
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 5

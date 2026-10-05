@@ -217,14 +217,14 @@ not using it for now.
 # ============================================================
 resource "aws_eks_pod_identity_association" "aws_lb_controller" {
   cluster_name    = var.cluster_name
-  namespace       = "default"
+  namespace       = "app"
   service_account = "aws-load-balancer-controller"
   role_arn        = module.aws_lb_controller_role.arn
 }
 
 resource "aws_eks_pod_identity_association" "external_dns" {
   cluster_name    = var.cluster_name
-  namespace       = "default"
+  namespace       = "app"
   service_account = "external-dns"
   role_arn        = module.external_dns_role.arn
 }

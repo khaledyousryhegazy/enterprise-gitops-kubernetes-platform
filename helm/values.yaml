@@ -1,0 +1,25 @@
+replicaCount: 2
+
+frontend:
+  image:
+    repository: "ecr repo"
+    tag: "dev"
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 64m
+    limits:
+      memory: 256Mi
+      cpu: 128m
+
+backend:
+  image:
+    repository: "ecr repo"
+    tag: "dev"
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 64m
+    limits:
+      memory: 256Mi
+      cpu: 128m
