@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gitops-platform-deployment-frontend
+  name: gitops-platform-deployment-backend
   namespace: app
   labels:
-    app.kubernetes.io/name: gitops-platform-frontend
-    app.kubernetes.io/instance: gitops-platform-frontend-production
+    app.kubernetes.io/name: gitops-platform-backend
+    app.kubernetes.io/instance: gitops-platform-backend-production
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     team: a-team
     env: production
 spec:
-  replicas: {{ .Values.replicaCountFrontend }}
+  replicas: {{ .Values.replicaCountBackend }}
   minReadySeconds: 30
   revisionHistoryLimit: 10
   strategy:
@@ -19,8 +19,8 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: gitops-platform-frontend
-      app.kubernetes.io/instance: gitops-platform-frontend-production
+      app.kubernetes.io/name: gitops-platform-backend
+      app.kubernetes.io/instance: gitops-platform-backend-production
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       team: a-team
       env: production
@@ -29,24 +29,24 @@ spec:
       annotations:
         # Force deployment replicas rollout on each change.
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       labels:
-        app.kubernetes.io/name: gitops-platform-frontend
-        app.kubernetes.io/instance: gitops-platform-frontend-production
+        app.kubernetes.io/name: gitops-platform-backend
+        app.kubernetes.io/instance: gitops-platform-backend-production
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         team: a-team
         env: production
     spec:
       containers:
-        - name: app-frontend
-          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-          env:
-            - name: BASE_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: gitops-platform-config
-                  key: BASE_API_URL
+        - name: app-backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          envFrom:
+            - configMapRef:
+                name: gitops-platform-config
+            - secretRef:
+                name: gitops-platform-secrets
           ports:
-            - containerPort: 80
+            - containerPort: 4000
               name: http
               protocol: TCP
           imagePullPolicy: Always
@@ -60,7 +60,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 80
+              port: 4000
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -68,7 +68,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 80
+              port: 4000
               scheme: HTTP
             initialDelaySeconds: 15
             timeoutSeconds: 5

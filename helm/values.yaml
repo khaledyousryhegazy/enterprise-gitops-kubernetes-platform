@@ -1,4 +1,5 @@
-replicaCount: 2
+replicaCountFrontend: 2
+replicaCountBackend: 2
 
 frontend:
   image:
