@@ -2,7 +2,7 @@
 module "ecr_frontend" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "${var.name_prefix}-k8s-platform-frontend"
+  repository_name = "${var.name_prefix}-ecr-frontend"
 
   repository_read_write_access_arns = [var.github_actions_role_arn]
   create_lifecycle_policy           = true
@@ -34,7 +34,7 @@ module "ecr_frontend" {
 module "ecr_backend" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "${var.name_prefix}-k8s-platform-backend"
+  repository_name = "${var.name_prefix}-ecr-backend"
 
   repository_read_write_access_arns = [var.github_actions_role_arn]
   create_lifecycle_policy           = true

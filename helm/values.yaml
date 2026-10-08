@@ -1,9 +1,15 @@
 replicaCountFrontend: 2
 replicaCountBackend: 2
 
+ingress:
+  enabled: true
+  className: alb
+  hosts:
+    - host: ""
+
 frontend:
   image:
-    repository: "ecr repo"
+    repository: "ecr repo" # Editable
     tag: "dev"
   resources:
     requests:
@@ -15,7 +21,7 @@ frontend:
 
 backend:
   image:
-    repository: "ecr repo"
+    repository: "ecr repo" # Editable
     tag: "dev"
   resources:
     requests:

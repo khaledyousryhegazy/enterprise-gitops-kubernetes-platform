@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: backend-service
+  namespace: app
   labels:
     app.kubernetes.io/name: backend-service
 spec:
