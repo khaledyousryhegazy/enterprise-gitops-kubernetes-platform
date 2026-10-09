@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+  kind: PodDisruptionBudget
+  metadata:
+    name: gitops-platform-pdb-frontend
+    namespace: app
+  spec:
+    minAvailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: gitops-platform-frontend
+        app.kubernetes.io/instance: gitops-platform-frontend-production
