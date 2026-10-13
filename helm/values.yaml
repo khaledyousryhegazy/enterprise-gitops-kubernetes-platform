@@ -9,7 +9,7 @@ ingress:
 
 frontend:
   image:
-    repository: "ecr repo" # Editable
+    repository: "khaledyousry/gitops-platform-frontend" # add ecr repo here
     tag: "dev"
   resources:
     requests:
@@ -21,7 +21,7 @@ frontend:
 
 backend:
   image:
-    repository: "ecr repo" # Editable
+    repository: "khaledyousry/gitops-platform-backend" # add ecr repo here
     tag: "dev"
   resources:
     requests:

@@ -12,6 +12,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     # redirect the traffic directly to pod's IP not to the node
     alb.ingress.kubernetes.io/target-type: ip
+
 spec:
   # the default that will deal with ingress is alb
   ingressClassName: {{ .Values.ingress.className | default "alb" | quote }}
