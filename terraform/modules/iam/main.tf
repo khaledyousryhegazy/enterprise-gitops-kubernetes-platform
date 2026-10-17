@@ -19,7 +19,7 @@ module "github_actions_role" {
   version = "~> 3.0"
 
   github_subjects = [
-    "${var.github_repository}:ref:refs/heads/main"
+    "khaledyousryhegazy@147883540/enterprise-gitops-kubernetes-platform@1327588043:ref:refs/heads/main"
   ]
 
   iam_role_policy_names = [
