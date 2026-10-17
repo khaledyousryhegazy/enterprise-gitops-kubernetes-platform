@@ -22,7 +22,7 @@ module "github_actions_role" {
   enable_github_oidc = true
 
   oidc_wildcard_subjects = [
-    "repo:${var.github_repository}:*"
+    "${var.github_repository}:*"
   ]
 
   policies = {
