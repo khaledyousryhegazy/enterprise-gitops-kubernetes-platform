@@ -1,16 +1,14 @@
 replicaCountFrontend: 2
 replicaCountBackend: 2
-
 ingress:
   enabled: true
   className: alb
   hosts:
     - host: ""
-
 frontend:
   image:
     repository: "604275788373.dkr.ecr.us-east-1.amazonaws.com/gitops-k8s-ecr-frontend"
-    tag: "dev"
+    tag: "8b9a888636fe0f57c2ed6bc72a6234a70d9c0a03"
   resources:
     requests:
       memory: 128Mi
@@ -18,11 +16,10 @@ frontend:
     limits:
       memory: 256Mi
       cpu: 128m
-
 backend:
   image:
     repository: "604275788373.dkr.ecr.us-east-1.amazonaws.com/gitops-k8s-ecr-backend"
-    tag: "dev"
+    tag: "8b9a888636fe0f57c2ed6bc72a6234a70d9c0a03"
   resources:
     requests:
       memory: 128Mi
