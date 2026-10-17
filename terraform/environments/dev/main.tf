@@ -19,7 +19,6 @@ module "iam" {
   name_prefix       = local.name_prefix
   tags              = local.tags
   github_repository = var.github_repository
-  cluster_name      = module.eks_cluster.cluster_name
 }
 
 module "kms" {

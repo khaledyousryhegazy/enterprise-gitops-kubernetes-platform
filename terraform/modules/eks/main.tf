@@ -27,8 +27,25 @@ module "eks" {
     }
   }
 
-  # Optional: Adds the current caller identity as an administrator via cluster access entry
-  enable_cluster_creator_admin_permissions = true
+  enable_cluster_creator_admin_permissions = false
+  endpoint_public_access                   = true
+  endpoint_private_access                  = true
+  authentication_mode                      = "API"
+
+  access_entries = {
+    khaled = {
+      principal_arn = "arn:aws:iam::604275788373:user/khaled"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
 
   vpc_id                   = var.vpc_id
   subnet_ids               = var.private_subnets

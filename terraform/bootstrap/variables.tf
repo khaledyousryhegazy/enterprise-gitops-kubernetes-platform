@@ -21,3 +21,9 @@ variable "argocd_chart_version" {
   type        = string
   default     = "7.7.13"
 }
+
+variable "aws_lb_controller_chart_version" {
+  description = "Pinned AWS Load Balancer Controller Helm chart version."
+  type        = string
+  default     = "1.14.0"
+}

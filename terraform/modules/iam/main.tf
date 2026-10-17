@@ -1,16 +1,4 @@
 # ============================================================
-# GitHub OIDC Provider
-# ============================================================
-
-# module "github_oidc_provider" {
-#   source = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
-
-#   url = "https://token.actions.githubusercontent.com"
-
-#   tags = var.tags
-# }
-
-# ============================================================
 # GitHub Actions OIDC Role
 # ============================================================
 
@@ -149,6 +137,202 @@ module "ebs_csi_role" {
 # AWS Load Balancer Controller Role
 # ============================================================
 
+data "aws_iam_policy_document" "aws_lb_controller" {
+  statement {
+    actions   = ["iam:CreateServiceLinkedRole"]
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "iam:AWSServiceName"
+      values   = ["elasticloadbalancing.amazonaws.com"]
+    }
+  }
+
+  statement {
+    actions = [
+      "ec2:DescribeAccountAttributes", "ec2:DescribeAddresses", "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeInternetGateways", "ec2:DescribeVpcs", "ec2:DescribeVpcPeeringConnections",
+      "ec2:DescribeSubnets", "ec2:DescribeSecurityGroups", "ec2:DescribeInstances",
+      "ec2:DescribeNetworkInterfaces", "ec2:DescribeTags", "ec2:GetCoipPoolUsage",
+      "ec2:DescribeCoipPools", "ec2:GetSecurityGroupsForVpc", "ec2:DescribeIpamPools",
+      "ec2:DescribeRouteTables", "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeLoadBalancerAttributes", "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeListenerCertificates", "elasticloadbalancing:DescribeSSLPolicies",
+      "elasticloadbalancing:DescribeRules", "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetGroupAttributes", "elasticloadbalancing:DescribeTargetHealth",
+      "elasticloadbalancing:DescribeTags", "elasticloadbalancing:DescribeTrustStores",
+      "elasticloadbalancing:DescribeListenerAttributes", "elasticloadbalancing:DescribeCapacityReservation"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "cognito-idp:DescribeUserPoolClient", "acm:ListCertificates", "acm:DescribeCertificate",
+      "iam:ListServerCertificates", "iam:GetServerCertificate", "waf-regional:GetWebACL",
+      "waf-regional:GetWebACLForResource", "waf-regional:AssociateWebACL",
+      "waf-regional:DisassociateWebACL", "wafv2:GetWebACL", "wafv2:GetWebACLForResource",
+      "wafv2:AssociateWebACL", "wafv2:DisassociateWebACL", "shield:GetSubscriptionState",
+      "shield:DescribeProtection", "shield:CreateProtection", "shield:DeleteProtection"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["ec2:AuthorizeSecurityGroupIngress", "ec2:RevokeSecurityGroupIngress"]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["ec2:CreateSecurityGroup"]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:aws:ec2:*:*:security-group/*"]
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateSecurityGroup"]
+    }
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions   = ["ec2:CreateTags", "ec2:DeleteTags"]
+    resources = ["arn:aws:ec2:*:*:security-group/*"]
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions   = ["ec2:AuthorizeSecurityGroupIngress", "ec2:RevokeSecurityGroupIngress", "ec2:DeleteSecurityGroup"]
+    resources = ["*"]
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions   = ["elasticloadbalancing:CreateLoadBalancer", "elasticloadbalancing:CreateTargetGroup"]
+    resources = ["*"]
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:CreateListener", "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:CreateRule", "elasticloadbalancing:DeleteRule"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = ["elasticloadbalancing:AddTags", "elasticloadbalancing:RemoveTags"]
+    resources = [
+      "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+    ]
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = ["elasticloadbalancing:AddTags", "elasticloadbalancing:RemoveTags"]
+    resources = [
+      "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
+      "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+      "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+      "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:ModifyLoadBalancerAttributes", "elasticloadbalancing:SetIpAddressType",
+      "elasticloadbalancing:SetSecurityGroups", "elasticloadbalancing:SetSubnets",
+      "elasticloadbalancing:DeleteLoadBalancer", "elasticloadbalancing:ModifyTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes", "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:ModifyListenerAttributes", "elasticloadbalancing:ModifyCapacityReservation",
+      "elasticloadbalancing:ModifyIpPools"
+    ]
+    resources = ["*"]
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = ["elasticloadbalancing:AddTags"]
+    resources = [
+      "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "elasticloadbalancing:CreateAction"
+      values   = ["CreateTargetGroup", "CreateLoadBalancer"]
+    }
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions   = ["elasticloadbalancing:RegisterTargets", "elasticloadbalancing:DeregisterTargets"]
+    resources = ["arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"]
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:SetWebAcl", "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:AddListenerCertificates", "elasticloadbalancing:RemoveListenerCertificates",
+      "elasticloadbalancing:ModifyRule", "elasticloadbalancing:SetRulePriorities"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "aws_lb_controller" {
+  name        = "${var.name_prefix}-aws-lb-controller"
+  description = "Permissions for the AWS Load Balancer Controller"
+  policy      = data.aws_iam_policy_document.aws_lb_controller.json
+  tags        = var.tags
+}
+
 module "aws_lb_controller_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
@@ -166,6 +350,10 @@ module "aws_lb_controller_role" {
         "sts:TagSession"
       ]
     }
+  }
+
+  policies = {
+    AWSLoadBalancerController = aws_iam_policy.aws_lb_controller.arn
   }
 
   tags = var.tags
@@ -196,39 +384,3 @@ module "external_dns_role" {
 
   tags = var.tags
 }
-
-
-
-
-
-
-/*
-not using it for now.
-*/
-
-# ============================================================
-# Associations: that's make the app in pods can use the roles
-# app -> pods -> service account -> aws_eks_pod_identity_association -> iam roles
-# ============================================================
-resource "aws_eks_pod_identity_association" "aws_lb_controller" {
-  cluster_name    = var.cluster_name
-  namespace       = "app"
-  service_account = "aws-load-balancer-controller"
-  role_arn        = module.aws_lb_controller_role.arn
-}
-
-resource "aws_eks_pod_identity_association" "external_dns" {
-  cluster_name    = var.cluster_name
-  namespace       = "app"
-  service_account = "external-dns"
-  role_arn        = module.external_dns_role.arn
-}
-
-
-/*
-ده الـ ServiceAccount اللي الـ Pod بتاع تطبيقك هيشتغل بيه. لو تطبيقك عايز يوصل لحاجة على AWS (مثلاً S3)، لازم:
-
-    تعمل IAM Role جديد (زي اللي عملتهم بالظبط لـ vpc_cni, ebs_csi) بس للـ app
-    تعمل association بينه وبين الـ ServiceAccount ده:
-
-*/
