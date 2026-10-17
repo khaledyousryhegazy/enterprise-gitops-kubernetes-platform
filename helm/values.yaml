@@ -9,7 +9,7 @@ ingress:
 
 frontend:
   image:
-    repository: "khaledyousry/gitops-platform-frontend" # add ecr repo here
+    repository: "604275788373.dkr.ecr.us-east-1.amazonaws.com/gitops-k8s-ecr-frontend"
     tag: "dev"
   resources:
     requests:
@@ -21,7 +21,7 @@ frontend:
 
 backend:
   image:
-    repository: "khaledyousry/gitops-platform-backend" # add ecr repo here
+    repository: "604275788373.dkr.ecr.us-east-1.amazonaws.com/gitops-k8s-ecr-backend"
     tag: "dev"
   resources:
     requests:

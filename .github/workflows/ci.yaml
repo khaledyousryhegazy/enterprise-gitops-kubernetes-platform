@@ -1,0 +1,114 @@
+name: booking-app
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # backend job
+  build-and-push-backend:
+    name: "Build & Push Backend"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v7.1.0
+
+      - name: Configure AWS Credentials Action for GitHub Actions
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          audience: sts.amazonaws.com.cn
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.ECR_BACKEND_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd app/backend
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  # frontend job
+  build-and-push-frontend:
+    name: "Build & Push Frontend"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v7.1.0
+
+      - name: Configure AWS Credentials Action for GitHub Actions
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          audience: sts.amazonaws.com.cn
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.ECR_FRONTEND_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd app/frontend
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  # update helm manifests & tags
+  update-helm-manifest:
+    name: "Update Helm Chart Image Tags"
+    needs: [build-and-push-backend, build-and-push-frontend]
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: main
+
+      - name: Install yq - portable yaml processor
+        uses: mikefarah/yq@v4.54.1
+
+      - name: Update Image tag in values.yaml
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          yq -i '.frontend.image.tag = strenv(IMAGE_TAG)' helm/values.yaml
+          yq -i '.backend.image.tag = strenv(IMAGE_TAG)' helm/values.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "no_mail+github-actions[bot]@fake_user.github.com"
+
+          if git diff --quiet -- helm/values.yaml; then
+            echo "No Helm manifests changes to commit."
+            exit 0
+          fi
+
+          git add helm/values.yaml
+          git commit -m "CI: update image tags to ${GITHUB_SHA::7}"
+          git push origin HEAD:main
