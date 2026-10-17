@@ -2,34 +2,29 @@
 # GitHub OIDC Provider
 # ============================================================
 
-module "github_oidc_provider" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
+# module "github_oidc_provider" {
+#   source = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
 
-  url = "https://token.actions.githubusercontent.com"
+#   url = "https://token.actions.githubusercontent.com"
 
-  tags = var.tags
-}
+#   tags = var.tags
+# }
 
 # ============================================================
 # GitHub Actions OIDC Role
 # ============================================================
 
 module "github_actions_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role"
+  source  = "unfunco/oidc-github/aws"
+  version = "~> 3.0"
 
-  name = "${var.name_prefix}-GH-actions-role"
-
-  enable_github_oidc = true
-
-  oidc_wildcard_subjects = [
-    "${var.github_repository}:*"
+  github_subjects = [
+    "${var.github_repository}:ref:refs/heads/main"
   ]
 
-  policies = {
-    AmazonEC2ContainerRegistryPowerUser = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  }
-
-  tags = var.tags
+  iam_role_policy_names = [
+    "AmazonEC2ContainerRegistryPowerUser"
+  ]
 }
 
 # ============================================================

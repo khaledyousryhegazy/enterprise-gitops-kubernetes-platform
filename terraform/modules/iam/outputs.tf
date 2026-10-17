@@ -7,7 +7,7 @@ output "eks_node_role_arn" {
 }
 
 output "github_actions_role_arn" {
-  value = module.github_actions_role.arn
+  value = module.github_actions_role.iam_role_arn
 }
 
 output "vpc_cni_role_arn" {
