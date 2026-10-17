@@ -5,15 +5,14 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   # backend job
   build-and-push-backend:
     name: "Build & Push Backend"
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout the code
         uses: actions/checkout@v7.0.1
@@ -46,6 +45,9 @@ jobs:
   build-and-push-frontend:
     name: "Build & Push Frontend"
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout the code
         uses: actions/checkout@v7.0.1
