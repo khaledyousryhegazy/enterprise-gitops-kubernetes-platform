@@ -26,6 +26,7 @@ jobs:
           audience: sts.amazonaws.com
           role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: github-actions-session
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -61,6 +62,7 @@ jobs:
           audience: sts.amazonaws.com
           role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: github-actions-session
 
       - name: Login to Amazon ECR
         id: login-ecr
