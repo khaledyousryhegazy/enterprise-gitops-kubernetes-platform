@@ -106,7 +106,7 @@ jobs:
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "no_mail+github-actions[bot]@fake_user.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           if git diff --quiet -- helm/values.yaml; then
             echo "No Helm manifests changes to commit."
