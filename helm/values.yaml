@@ -11,7 +11,7 @@ ingress:
 frontend:
   image:
     repository: "604275788373.dkr.ecr.us-east-1.amazonaws.com/gitops-k8s-ecr-frontend"
-    tag: "3a13f26f8600b8b962395eb708f134466422491d"
+    tag: "b772573c00e26c11857778046006f2e0366b2930"
   resources:
     requests:
       memory: 128Mi
@@ -22,7 +22,7 @@ frontend:
 backend:
   image:
     repository: "604275788373.dkr.ecr.us-east-1.amazonaws.com/gitops-k8s-ecr-backend"
-    tag: "3a13f26f8600b8b962395eb708f134466422491d"
+    tag: "b772573c00e26c11857778046006f2e0366b2930"
   resources:
     requests:
       memory: 128Mi
