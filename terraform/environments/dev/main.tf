@@ -15,10 +15,11 @@ module "security_groups" {
 }
 
 module "iam" {
-  source            = "../../modules/iam"
-  name_prefix       = local.name_prefix
-  tags              = local.tags
-  github_repository = var.github_repository
+  source             = "../../modules/iam"
+  name_prefix        = local.name_prefix
+  tags               = local.tags
+  github_repository  = var.github_repository
+  rds_app_secret_arn = aws_secretsmanager_secret.rds_app_database.arn
 }
 
 module "kms" {

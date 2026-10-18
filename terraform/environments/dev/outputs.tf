@@ -68,6 +68,10 @@ output "external_dns_role_arn" {
   value = module.iam.external_dns_role_arn
 }
 
+output "external_secrets_role_arn" {
+  value = module.iam.external_secrets_role_arn
+}
+
 output "github_actions_role_arn" {
   value = module.iam.github_actions_role_arn
 }
@@ -96,6 +100,10 @@ output "rds_address" {
 
 output "rds_master_user_secret_arn" {
   value = module.rds_db.rds_master_user_secret_arn
+}
+
+output "rds_app_database_secret_arn" {
+  value = aws_secretsmanager_secret.rds_app_database.arn
 }
 
 # ============================================================

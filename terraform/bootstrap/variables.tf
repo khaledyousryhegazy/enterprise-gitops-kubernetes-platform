@@ -27,3 +27,9 @@ variable "aws_lb_controller_chart_version" {
   type        = string
   default     = "1.14.0"
 }
+
+variable "external_secrets_chart_version" {
+  description = "Pinned External Secrets Operator Helm chart version."
+  type        = string
+  default     = "2.13.0"
+}

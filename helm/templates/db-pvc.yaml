@@ -2,6 +2,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: ebs-gp3-sc
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 provisioner: ebs.csi.aws.com
 volumeBindingMode: WaitForFirstConsumer
 parameters:
@@ -12,6 +14,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
   namespace: app
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
   accessModes:
     - ReadWriteOnce

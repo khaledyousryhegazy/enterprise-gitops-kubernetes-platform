@@ -1,5 +1,8 @@
 replicaCountFrontend: 2
 replicaCountBackend: 2
+aws:
+  region: us-east-1
+  appDatabaseSecretName: gitops-platform/rds/app
 ingress:
   enabled: true
   className: alb

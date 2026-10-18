@@ -384,3 +384,49 @@ module "external_dns_role" {
 
   tags = var.tags
 }
+
+# ============================================================
+# External Secrets Operator Pod Identity Role
+# ============================================================
+
+module "external_secrets_role" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-role"
+
+  name = "${var.name_prefix}-external-secrets-role"
+
+  trust_policy_permissions = {
+    pods = {
+      principals = [{
+        type        = "Service"
+        identifiers = ["pods.eks.amazonaws.com"]
+      }]
+
+      actions = [
+        "sts:AssumeRole",
+        "sts:TagSession"
+      ]
+    }
+  }
+
+  tags = var.tags
+}
+
+data "aws_iam_policy_document" "external_secrets" {
+  statement {
+    sid       = "ReadApplicationDatabaseSecret"
+    actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
+    resources = [var.rds_app_secret_arn]
+  }
+}
+
+resource "aws_iam_policy" "external_secrets" {
+  name        = "${var.name_prefix}-external-secrets-read-rds-app"
+  description = "Allow ESO to read only the backend application database secret"
+  policy      = data.aws_iam_policy_document.external_secrets.json
+  tags        = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "external_secrets" {
+  role       = module.external_secrets_role.name
+  policy_arn = aws_iam_policy.external_secrets.arn
+}

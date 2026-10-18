@@ -50,3 +50,18 @@ resource "helm_release" "aws_load_balancer_controller" {
   atomic          = true
   cleanup_on_fail = true
 }
+
+
+resource "helm_release" "external_secrets" {
+  name             = "external-secrets"
+  repository       = "https://charts.external-secrets.io"
+  chart            = "external-secrets"
+  version          = var.external_secrets_chart_version
+  namespace        = "external-secrets"
+  create_namespace = true
+
+  wait            = true
+  timeout         = 600
+  atomic          = true
+  cleanup_on_fail = true
+}
