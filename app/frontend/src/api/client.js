@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.BASE_API_URL;
+const API_URL = import.meta.env.VITE_BASE_API_URL || "/api";
 
 async function request(path, { method = "GET", body, token } = {}) {
   const headers = { "Content-Type": "application/json" };
